@@ -1,10 +1,9 @@
 # IPTV SCAN
 ## requesitos:
 - python 3
-- requests
 - combo
 - nome do arquivo a ser salvo o iptv
+- número de bots em execução
 ## uso
-python3 -m pip install requests
 
-python3 iptv.py
+ex: python scan.py -H http://seu_host.com -C combo.txt -O listas.txt -B 7
