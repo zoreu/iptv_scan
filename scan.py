@@ -76,6 +76,10 @@ def get_info_iptv(host,username,password):
     host = parsed_url.netloc
     porta = parsed_url.port
     result = {}
+    try:
+        host = host.split(':')[0]
+    except:
+        pass
     if porta:
         host_ = f'{protocolo}://{host}:{porta}'
         api = f'{protocolo}://{host}:{porta}/player_api.php?username={username}&password={password}'
@@ -132,12 +136,19 @@ def thread_iptv(f,host,username,password):
         protocolo = parsed_url.scheme
         host = parsed_url.netloc
         porta = parsed_url.port
+        try:
+            host = host.split(':')[0]
+        except:
+            pass        
         if porta:
             host_ = f'{protocolo}://{host}:{porta}'
         else:
             host_ = f'{protocolo}://{host}'
-        msg = f'###################\nhost: {host_}\nusername: {username}\npassword: {password}\n##################\n'
-        print(msg)
+        try:
+            msg = f'###################\nhost: {host_}\nusername: {username}\npassword: {password}\n##################\n'
+            print(msg)
+        except:
+            pass
         final = '###################\n'
         final += result
         final += '\n'
@@ -202,4 +213,5 @@ def main():
   
 
 if __name__ == "__main__":
-    main()   
+    main() 
+      
