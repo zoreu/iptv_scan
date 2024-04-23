@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import http.client
 from urllib.parse import urlparse
 import json as json_
@@ -73,9 +74,11 @@ def get_info_iptv(host,username,password):
     porta = parsed_url.port
     result = {}
     if porta:
+        host_ = f'{protocolo}://{host}:{porta}'
         api = f'{protocolo}://{host}:{porta}/player_api.php?username={username}&password={password}'
         m3u = f'{protocolo}://{host}:{porta}/get.php?username={username}&password={password}&type=m3u_plus&output=m3u8'
     else:
+        host_ = f'{protocolo}://{host}'
         api = f'{protocolo}://{host}/player_api.php?username={username}&password={password}'
         m3u = f'{protocolo}://{host}/get.php?username={username}&password={password}&type=m3u_plus&output=m3u8'
     d = HTTP.get(api).json()
@@ -88,7 +91,7 @@ def get_info_iptv(host,username,password):
             status = 'Teste'
             ok = False
         if ok:
-            result['host'] = f'{protocolo}://{host}'
+            result['host'] = host_
             result['usuario'] = username
             result['senha'] = password            
             result['status'] = status
@@ -122,7 +125,15 @@ def get_info_iptv(host,username,password):
 def thread_iptv(f,host,username,password):
     result = get_info_iptv(host,username,password)
     if result:
-        msg = f'###################\nEncontrado:\nhost: {host}\nusername: {username}\npassword: {password}\n##################\n'
+        parsed_url = urlparse(host)
+        protocolo = parsed_url.scheme
+        host = parsed_url.netloc
+        porta = parsed_url.port
+        if porta:
+            host_ = f'{protocolo}://{host}:{porta}'
+        else:
+            host_ = f'{protocolo}://{host}'
+        msg = f'###################\nhost: {host_}\nusername: {username}\npassword: {password}\n##################\n'
         print(msg)
         final = '###################\n'
         final += result
@@ -181,4 +192,4 @@ def main():
   
 
 if __name__ == "__main__":
-    main()   
+    main()
