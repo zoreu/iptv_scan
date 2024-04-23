@@ -6,6 +6,9 @@ import argparse
 import concurrent.futures
 from datetime import datetime
 import sys
+import os
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
 class HTTP(object):
     def __init__(self, url, headers=None):
@@ -144,24 +147,29 @@ def thread_iptv(f,host,username,password):
     
 
 def check_and_save(host, combo, output, bots):
-    with open(output, 'a', encoding='utf8') as f:
-        with open(combo, 'r', encoding='utf8') as fc:
-            with concurrent.futures.ThreadPoolExecutor(max_workers=int(bots)) as executor:
-                for line in fc.readlines():
-                    line = line.replace('\n', '').replace('\r', '').replace(' ', '').replace('\ufeff', '')
-                    if ':' in line:
-                        try:
-                            username = line.split(':')[0]
-                        except:
-                            username = False
-                        try:
-                            password = line.split(':')[1]
-                        except:
-                            password = False
-                        if username and password:
-                            username = str(username)
-                            password = str(password)
-                            executor.submit(thread_iptv, f, host, username, password)               
+    if not os.path.exists(combo):
+        combo = os.path.join(dir_path, combo)
+    if os.path.exists(combo):
+        with open(output, 'a', encoding='utf8') as f:
+            with open(combo, 'r', encoding='utf8') as fc:
+                with concurrent.futures.ThreadPoolExecutor(max_workers=int(bots)) as executor:
+                    for line in fc.readlines():
+                        line = line.replace('\n', '').replace('\r', '').replace(' ', '').replace('\ufeff', '')
+                        if ':' in line:
+                            try:
+                                username = line.split(':')[0]
+                            except:
+                                username = False
+                            try:
+                                password = line.split(':')[1]
+                            except:
+                                password = False
+                            if username and password:
+                                username = str(username)
+                                password = str(password)
+                                executor.submit(thread_iptv, f, host, username, password)
+    else:
+        print('O caminho: %s nao existe'%combo)               
                     
 
 
@@ -186,10 +194,12 @@ def main():
         except KeyboardInterrupt:
             print("\nTecla Ctrl+C pressionada. Encerrando o programa...")
             sys.exit(0)  # Sai do programa com status de sucesso
+        finally:
+            print('Scan de listas concluido')
     else:
         print('informacao invalida')
 
   
 
 if __name__ == "__main__":
-    main()
+    main()   
