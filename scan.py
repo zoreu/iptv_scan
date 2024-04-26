@@ -54,7 +54,7 @@ class HTTP(object):
             self.text = self.content.decode()
             conn.close()
         except Exception as e:
-            print('url não existe')
+            pass
 
         return self
     
