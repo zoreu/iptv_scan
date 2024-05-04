@@ -9,6 +9,8 @@ import sys
 import os
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
+global num
+num = 0
 
 class HTTP(object):
     def __init__(self, url, headers=None):
@@ -135,6 +137,7 @@ def get_info_iptv(host,username,password):
 def thread_iptv(f,host,username,password):
     result = get_info_iptv(host,username,password)
     if result:
+        global num
         parsed_url = urlparse(host)
         protocolo = parsed_url.scheme
         host = parsed_url.netloc
@@ -152,6 +155,7 @@ def thread_iptv(f,host,username,password):
             print(msg)
         except:
             pass
+        num += 1
         final = '###################\n'
         final += result
         final += '\n'
@@ -188,6 +192,7 @@ def check_and_save(host, combo, output, bots):
 
 
 def main():
+    global num
     parser = argparse.ArgumentParser(description='Scan iptv, use com moderação kkk')
     parser.add_argument('-H', '--host', help='Host', required=True)
     parser.add_argument('-C', '--combo', help='Caminho para o arquivo combo.txt', required=True)
@@ -209,6 +214,9 @@ def main():
             print("\nTecla Ctrl+C pressionada. Encerrando o programa...")
             sys.exit(0)  # Sai do programa com status de sucesso
         finally:
+            if num > 0:
+                msg = f'Total encontrado {str(num)}'
+                print(msg)
             print('Scan de listas concluido')
     else:
         print('informacao invalida')
