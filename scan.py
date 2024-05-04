@@ -90,38 +90,41 @@ def get_info_iptv(host,username,password):
         m3u = f'{protocolo}://{host}/get.php?username={username}&password={password}&type=m3u_plus&output=m3u8'
     d = HTTP.get(api).json()
     if d:
-        status = d['user_info']['status']
-        if status == 'Active':
-            status = 'Ativo'
-            ok = True
-        elif status == 'Trial':
-            status = 'Teste'
-            ok = False
-        if ok:
-            result['host'] = host_
-            result['usuario'] = username
-            result['senha'] = password            
-            result['status'] = status
-        expiry = d['user_info']['exp_date']
         try:
-            created = d['user_info']['created_at']
-            created = datetime.fromtimestamp(int(created)).strftime('%d/%m/%Y - %H:%M')
+            status = d['user_info']['status']
+            if status == 'Active':
+                status = 'Ativo'
+                ok = True
+            elif status == 'Trial':
+                status = 'Teste'
+                ok = False
+            if ok:
+                result['host'] = host_
+                result['usuario'] = username
+                result['senha'] = password            
+                result['status'] = status
+            expiry = d['user_info']['exp_date']
+            try:
+                created = d['user_info']['created_at']
+                created = datetime.fromtimestamp(int(created)).strftime('%d/%m/%Y - %H:%M')
+            except:
+                created = ''
+            if ok:
+                result['criado_em'] = created
+                if not expiry:
+                    result['vencimento'] = 'Ilimitado'
+                else:
+                    expiry = datetime.fromtimestamp(int(expiry)).strftime('%d/%m/%Y - %H:%M')
+                    result['vencimento'] = expiry
+            max_connection = str(d['user_info']['max_connections'])
+            if max_connection == 'None':
+                max_connection = 'Ilimitado'
+            if ok:
+                result['conexoes_permitidas'] = max_connection
+                result['conexoes_ativas'] = str(d['user_info']['active_cons'])
+                result['m3u'] = m3u
         except:
-            created = ''
-        if ok:
-            result['criado_em'] = created
-            if not expiry:
-                result['vencimento'] = 'Ilimitado'
-            else:
-                expiry = datetime.fromtimestamp(int(expiry)).strftime('%d/%m/%Y - %H:%M')
-                result['vencimento'] = expiry
-        max_connection = str(d['user_info']['max_connections'])
-        if max_connection == 'None':
-            max_connection = 'Ilimitado'
-        if ok:
-            result['conexoes_permitidas'] = max_connection
-            result['conexoes_ativas'] = str(d['user_info']['active_cons'])
-            result['m3u'] = m3u
+            pass
     if result:
         lista_strings = [f'{chave}: {valor}' for chave, valor in result.items()]
         final = '\n'.join(lista_strings)
@@ -214,4 +217,3 @@ def main():
 
 if __name__ == "__main__":
     main() 
-      
