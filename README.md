@@ -13,4 +13,8 @@
 
 ex: python scan.py -H http://seu_host.com -C combo.txt -O listas.txt -B 7
 
+### Notebooks
+
+- [scan.ipynb](https://colab.research.google.com/github/zoreu/iptv_scan/blob/master/scan.ipynb): Clique aqui para abrir o notebook no Google Colab.
+
 
